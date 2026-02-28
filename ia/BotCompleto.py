@@ -115,6 +115,7 @@ def preprocessor(state: State):
 
                         Output format:
                         First sentence: unchanged.
+                        Splitter: a hashtag symbol (#) followed by a space.
                         Second sentence: added only if useful extra information is found, and must be short, factual, and directly relevant.
                         
                        Important Behavior Rules:
@@ -168,14 +169,13 @@ def classifier(state: State):
                         Do not use any other format or symbols.
                         """},
 
-                    {"role": "user",
+         {"role": "user",
          "content": last_message.content}
     ]
     
     reply = llm.invoke(messages)
     category = reply.content.strip().lower()
     return {"mssg_type": category}
-
 
 def router(state: State):
     print("router")
@@ -191,7 +191,7 @@ def faqs(state: State):
     print("faqs")
     
     last_message = state["messages"][-1]
-    user_question = last_message.content
+    user_question = last_message.content.split("#")[0].strip()  # Obtener la primera oración antes del hashtag
     
     # Generar embedding para la pregunta del usuario
     user_question_embedding = model.encode(user_question, convert_to_tensor=True)
@@ -226,7 +226,6 @@ def faqs(state: State):
         }
     ]
     reply = llm.invoke(messages)
-
     user_id = current_user_id
     timestamp = datetime.now()
     content = reply.content.split('</think>\n\n')[-1]

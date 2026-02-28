@@ -1,3 +1,4 @@
 my-frontend/node_modules
 my-frontend/package-lock.json
 ia/venv
+ia/.env
