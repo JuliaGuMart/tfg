@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';  // añadir useRef y useEffect
 import './index.css';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
@@ -7,6 +7,12 @@ function Chat() {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [showInstructions, setShowInstructions] = useState(true);
+  const messagesEndRef = useRef(null);  // ref al final del chat
+
+  // scroll automático cada vez que cambian los mensajes
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,6 +63,7 @@ function Chat() {
           </div>
         ))}
 
+        <div ref={messagesEndRef} />  {/* ancla invisible al final */}
       </div>
       <form onSubmit={handleSubmit} className="form">
         <input
